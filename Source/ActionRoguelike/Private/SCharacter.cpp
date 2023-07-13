@@ -2,7 +2,8 @@
 
 
 #include "SCharacter.h"
-
+#include "DrawDebugHelpers.h"
+#include "SInteractionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -13,12 +14,14 @@ ASCharacter::ASCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
-	m_SpringArm->bUsePawnControlRotation = true; // Enable
-	m_SpringArm->SetupAttachment(RootComponent);
+	M_SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	M_SpringArm->bUsePawnControlRotation = true; // Enable
+	M_SpringArm->SetupAttachment(RootComponent);
 	
-	m_camera = CreateDefaultSubobject<UCameraComponent>("CameraComp");
-	m_camera->SetupAttachment(m_SpringArm);
+	M_Camera = CreateDefaultSubobject<UCameraComponent>("CameraComp");
+	M_Camera->SetupAttachment(M_SpringArm);
+
+	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Disable
 
@@ -30,6 +33,7 @@ void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//CreateWidget("BP_PrepareUI");
 }
 
 // Called every frame
@@ -49,6 +53,10 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Lookup", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("PrimaryAttack",IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("Jump",IE_Pressed, this, &ASCharacter::Jumpjump);
+	PlayerInputComponent->BindAction("PrimaryInteract",IE_Pressed, this, &ASCharacter::PrimaryInteract);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -70,5 +78,31 @@ void ASCharacter::MoveRight(float Value)
 	FVector const RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
 	
 	AddMovementInput(RightVector, Value);
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("index_03_r");
+	
+	FTransform SpawnTM = FTransform(GetControlRotation(),HandLocation);
+
+	FActorSpawnParameters spawnParams;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, spawnParams);
+}
+
+void ASCharacter::Jumpjump()
+{
+	Jump();
+}
+
+void ASCharacter::PrimaryInteract()
+{
+	if(InteractionComp)
+	{
+		InteractionComp->PrimaryInteract();	
+	}
+	
 }
 

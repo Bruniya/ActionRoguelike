@@ -8,27 +8,39 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class USInteractionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
+
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
-
+	void PrimaryInteract();
 protected:
 	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* m_SpringArm;
+	USpringArmComponent* M_SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* m_camera;
+	UCameraComponent* M_Camera;
+
+	UPROPERTY(VisibleAnywhere)
+	USInteractionComponent* InteractionComp;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+	void PrimaryAttack();
+	void Jumpjump();
+	
 
 public:	
 	// Called every frame

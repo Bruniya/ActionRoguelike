@@ -14,7 +14,7 @@ class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
 
 public:
 
-	void PrimaryInteract();
+	void PrimaryInteract(FRotator);
 
 public:	
 	// Sets default values for this component's properties

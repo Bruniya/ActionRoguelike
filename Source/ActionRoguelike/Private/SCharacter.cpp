@@ -101,7 +101,7 @@ void ASCharacter::PrimaryInteract()
 {
 	if(InteractionComp)
 	{
-		InteractionComp->PrimaryInteract();	
+		InteractionComp->PrimaryInteract(GetControlRotation());	
 	}
 	
 }

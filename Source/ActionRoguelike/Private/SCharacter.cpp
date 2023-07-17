@@ -88,7 +88,8 @@ void ASCharacter::PrimaryAttack()
 
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
+	spawnParams.Instigator = this;
+	
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, spawnParams);
 }
 
